@@ -95,25 +95,30 @@ export function Header({ title, userName = 'User', navItems = [] }: HeaderProps)
                     <div className="flex items-center gap-2">
                         <div className="hidden md:block">
                             <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="gap-3 font-bold border border-slate-100 rounded-full hover:bg-slate-50 px-4 h-10">
-                                        <div className="h-6 w-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                                            <User className="h-4 w-4" />
-                                        </div>
-                                        <span className="text-[#121212] text-xs uppercase tracking-widest">{userName}</span>
-                                    </Button>
-                                </DropdownMenuTrigger>
+                                <DropdownMenuTrigger
+                                    render={
+                                        <Button variant="ghost" size="sm" className="gap-3 font-bold border border-slate-100 rounded-full hover:bg-slate-50 px-4 h-10">
+                                            <div className="h-6 w-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                                                <User className="h-4 w-4" />
+                                            </div>
+                                            <span className="text-[#121212] text-xs uppercase tracking-widest">{userName}</span>
+                                        </Button>
+                                    }
+                                />
                                 <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl border-emerald-50 shadow-xl mt-2">
                                     <div className="px-3 py-2 mb-2 border-b border-slate-50">
                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Đã đăng nhập</p>
                                         <p className="text-sm font-black text-[#121212] truncate">{userName}</p>
                                     </div>
-                                    <DropdownMenuItem asChild className="rounded-xl cursor-pointer font-bold text-slate-600 focus:text-emerald-500 focus:bg-emerald-50">
-                                        <Link href="/settings" className="flex items-center">
-                                            <User className="h-4 w-4 mr-2" />
-                                            Cài đặt
-                                        </Link>
-                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        render={
+                                            <Link href="/settings" className="flex items-center">
+                                                <User className="h-4 w-4 mr-2" />
+                                                Cài đặt
+                                            </Link>
+                                        }
+                                        className="rounded-xl cursor-pointer font-bold text-slate-600 focus:text-emerald-500 focus:bg-emerald-50"
+                                    />
                                     <DropdownMenuItem onClick={handleLogout} className="rounded-xl cursor-pointer text-red-500 focus:text-red-600 focus:bg-red-50 font-bold">
                                         <div className="flex items-center">
                                             <LogOut className="h-4 w-4 mr-2" />
