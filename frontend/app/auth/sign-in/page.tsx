@@ -140,6 +140,7 @@ export default function AuthPage() {
                                     form={loginForm}
                                     isLoading={isLoading}
                                     error={error}
+                                    setError={setError}
                                     setIsLogin={setIsLogin}
                                     showPassword={showPassword}
                                     setShowPassword={setShowPassword}
@@ -156,6 +157,7 @@ export default function AuthPage() {
                                     form={registerForm}
                                     isLoading={isLoading}
                                     error={error}
+                                    setError={setError}
                                     setIsLogin={setIsLogin}
                                     showPassword={showPassword}
                                     setShowPassword={setShowPassword}
@@ -169,7 +171,7 @@ export default function AuthPage() {
     );
 }
 
-function AuthCard({ title, subtitle, isLogin, onSubmit, form, isLoading, error, setIsLogin, showPassword, setShowPassword }: any) {
+function AuthCard({ title, subtitle, isLogin, onSubmit, form, isLoading, error, setError, setIsLogin, showPassword, setShowPassword }: any) {
     return (
         <div className="bg-white/70 backdrop-blur-2xl border border-white/50 rounded-[2.5rem] p-8 lg:p-12 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)]">
             <div className="space-y-6">
