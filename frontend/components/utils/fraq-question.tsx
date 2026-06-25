@@ -6,20 +6,24 @@ import { ChevronDown, ChevronUp } from "lucide-react"
 
 const faqs = [
     {
-        question: "Claira là gì?",
-        answer: "Claira là hệ thống tự động hóa xét duyệt bồi thường bảo hiểm y tế bằng công nghệ AI và GenAI, giúp rút ngắn thời gian xử lý từ vài ngày xuống còn vài phút.",
+        question: "MoneyMind là gì?",
+        answer: "MoneyMind là ứng dụng quản lý chi tiêu cá nhân thông minh, cho phép bạn ghi nhận giao dịch bằng ngôn ngữ tự nhiên (ví dụ: 'ăn phở 50k trưa nay'), AI sẽ tự động phân loại và lưu trữ.",
     },
     {
-        question: "Hệ thống có thể trích xuất dữ liệu từ các tài liệu viết tay không?",
-        answer: "Có, AI của chúng tôi sử dụng các mô hình VLM tiên tiến có khả năng nhận diện và trích xuất dữ liệu từ các đơn thuốc viết tay, hóa đơn in mờ và các tài liệu PDF scan.",
+        question: "Tính năng nhập bằng ngôn ngữ tự nhiên hoạt động thế nào?",
+        answer: "Bạn chỉ cần gõ câu như bình thường, ví dụ 'grab đi làm 30k' hoặc 'lương tháng 6 là 20tr'. AI sẽ tự nhận diện số tiền, loại giao dịch (thu/chi), danh mục và ngày tháng, rồi auto-fill vào form để bạn xác nhận.",
     },
     {
-        question: "Độ chính xác của hệ thống là bao nhiêu?",
-        answer: "Hệ thống đạt độ chính xác trích xuất dữ liệu trên 90% và độ chính xác phân loại tài liệu trên 95%.",
+        question: "Dữ liệu tài chính của tôi có được bảo mật không?",
+        answer: "Có. Mọi dữ liệu được mã hóa, xác thực bằng JWT token, và mỗi người dùng chỉ có thể truy cập dữ liệu của chính mình. Backend deploy trên GCP Cloud Run với các tiêu chuẩn bảo mật cao.",
     },
     {
-        question: "Dữ liệu y tế của khách hàng có được bảo mật không?",
-        answer: "Chúng tôi cam kết bảo mật dữ liệu tuyệt đối theo các tiêu chuẩn ngành bảo hiểm. Dữ liệu được mã hóa và chỉ sử dụng cho mục đích thẩm định bồi thường.",
+        question: "Ứng dụng có miễn phí không?",
+        answer: "Hoàn toàn miễn phí cho tất cả tính năng cốt lõi: ghi nhận giao dịch, quản lý ngân sách, báo cáo biểu đồ và nhập bằng ngôn ngữ tự nhiên.",
+    },
+    {
+        question: "Tôi có thể quản lý nhiều ví không?",
+        answer: "Có. MoneyMind hỗ trợ đa ví: tiền mặt, tài khoản ngân hàng, ví điện tử, thẻ tín dụng. Mỗi giao dịch có thể gắn với một ví cụ thể và số dư được cập nhật tự động.",
     },
 ]
 
@@ -37,7 +41,7 @@ export function FAQSection() {
                     className="text-center mb-12"
                 >
                     <motion.span
-                        className="font-mono text-[#3B82F6] text-xs tracking-widest inline-block"
+                        className="font-mono text-emerald-500 text-xs tracking-widest inline-block"
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
@@ -58,19 +62,19 @@ export function FAQSection() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1 }}
-                            className="border border-blue-100 rounded-2xl overflow-hidden bg-white shadow-sm"
+                            className="border border-emerald-100 rounded-2xl overflow-hidden bg-white shadow-sm"
                         >
                             <button
                                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
                                 className="w-full px-6 py-5 flex items-center justify-between text-left group"
                             >
-                                <span className="text-lg font-bold text-[#121212] group-hover:text-[#3B82F6] transition-colors">
+                                <span className="text-lg font-bold text-[#121212] group-hover:text-emerald-500 transition-colors">
                                     {faq.question}
                                 </span>
                                 {openIndex === index ? (
-                                    <ChevronUp className="text-[#3B82F6]" />
+                                    <ChevronUp className="text-emerald-500" />
                                 ) : (
-                                    <ChevronDown className="text-[#121212]/40 group-hover:text-[#3B82F6]" />
+                                    <ChevronDown className="text-[#121212]/40 group-hover:text-emerald-500" />
                                 )}
                             </button>
                             {openIndex === index && (

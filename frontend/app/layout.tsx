@@ -8,9 +8,9 @@ const _geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const _geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
-  title: 'Expense Management',
+  title: 'MoneyMind — Quản lý chi tiêu thông minh',
   description:
-    'Expense Management is an AI-powered insurance claim auto-adjudication system for healthcare.',
+    'MoneyMind giúp bạn theo dõi thu nhập, chi tiêu và quản lý ngân sách hàng tháng bằng AI.',
 
   icons: {
     icon: '/expense.png',
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="bg-background">
+    <html lang="vi" className="bg-background">
       <body className="font-sans antialiased">
         <LenisProvider>
           {children}

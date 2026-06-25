@@ -18,7 +18,6 @@ export default function AuthPage() {
     const [error, setError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
 
-    // Forms
     const loginForm = useForm<LoginInput>({
         resolver: zodResolver(loginSchema),
         defaultValues: { email: '', password: '' },
@@ -29,7 +28,6 @@ export default function AuthPage() {
         defaultValues: { fullName: '', email: '', password: '', confirmPassword: '', acceptTerms: true },
     });
 
-    // Đọc lỗi từ Google OAuth callback (nếu có)
     useEffect(() => {
         const oauthError = searchParams.get('error');
         if (!oauthError) return;
@@ -44,12 +42,6 @@ export default function AuthPage() {
         setError(errorMessages[oauthError] ?? 'Đã có lỗi xảy ra khi đăng nhập với Google.');
     }, [searchParams]);
 
-    const redirectByRole = (role: string) => {
-        if (role === 'admin') router.push('/admin/dashboard');
-        else if (role === 'adjudicator') router.push('/adjudicator/queue');
-        else router.push('/customer/dashboard');
-    };
-
     const onLoginSubmit = async (data: LoginInput) => {
         setIsLoading(true);
         setError(null);
@@ -62,7 +54,7 @@ export default function AuthPage() {
             const json = await res.json();
             if (!res.ok) { setError(json.error ?? 'Email hoặc mật khẩu không chính xác'); setIsLoading(false); return; }
             localStorage.setItem('user', JSON.stringify(json.user));
-            redirectByRole(json.user.role);
+            router.push('/dashboard');
         } catch { setError('Đã có lỗi xảy ra. Vui lòng thử lại.'); setIsLoading(false); }
     };
 
@@ -78,7 +70,7 @@ export default function AuthPage() {
             const json = await res.json();
             if (!res.ok) { setError(json.error ?? 'Email đã được đăng ký'); setIsLoading(false); return; }
             localStorage.setItem('user', JSON.stringify(json.user));
-            router.push('/customer/dashboard');
+            router.push('/dashboard');
         } catch { setError('Đã có lỗi xảy ra. Vui lòng thử lại.'); setIsLoading(false); }
     };
 
@@ -86,8 +78,8 @@ export default function AuthPage() {
         <div className="min-h-screen flex items-center justify-center overflow-hidden bg-white relative">
             {/* Background Effects */}
             <div className="absolute inset-0">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-cyan-50" />
-                <div className="absolute top-[-10%] left-1/4 w-[500px] h-[500px] bg-blue-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-white to-teal-50" />
+                <div className="absolute top-[-10%] left-1/4 w-[500px] h-[500px] bg-emerald-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" />
                 <div className="absolute bottom-[10%] right-1/4 w-[400px] h-[400px] bg-teal-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
                 <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(0deg, transparent 24%, #121212 25%, transparent 27%), linear-gradient(90deg, transparent 24%, #121212 25%, transparent 27%)', backgroundSize: '40px 40px' }} />
             </div>
@@ -100,32 +92,32 @@ export default function AuthPage() {
                             <Link href="/">
                                 <motion.div whileHover={{ scale: 1.05 }} className="inline-block">
                                     <h1 className="text-6xl lg:text-8xl font-black tracking-tighter leading-[0.85]">
-                                        <span className="text-[#121212]">Cla</span>
-                                        <span className="text-[#3B82F6]">ira</span>
+                                        <span className="text-[#121212]">Money</span>
+                                        <span className="text-emerald-500">Mind</span>
                                     </h1>
                                 </motion.div>
                             </Link>
-                            <div className="w-24 h-1.5 bg-gradient-to-r from-[#3B82F6] to-cyan-400 rounded-full" />
+                            <div className="w-24 h-1.5 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full" />
                         </div>
 
                         <div className="space-y-4">
-                            <h2 className="text-2xl md:text-3xl font-bold text-[#121212] tracking-tight">AI Insurance Revolution</h2>
+                            <h2 className="text-2xl md:text-3xl font-bold text-[#121212] tracking-tight">Quản lý chi tiêu thông minh</h2>
                             <p className="text-lg leading-relaxed text-slate-600 max-w-md">
                                 {isLogin
-                                    ? "Đăng nhập để trải nghiệm hệ thống xét duyệt hồ sơ tự động hóa bằng trí tuệ nhân tạo."
-                                    : "Tham gia cùng chúng tôi để bắt đầu quản lý hồ sơ bảo hiểm của bạn một cách thông minh nhất."}
+                                    ? "Đăng nhập để theo dõi thu chi, quản lý ngân sách và nhận insights tài chính từ AI."
+                                    : "Tạo tài khoản miễn phí để bắt đầu kiểm soát tài chính cá nhân một cách thông minh."}
                             </p>
                         </div>
 
                         <div className="flex items-center gap-6 pt-4">
                             <div className="space-y-1">
-                                <div className="text-2xl font-bold text-[#3B82F6]">24h</div>
-                                <div className="text-xs font-mono text-slate-400 uppercase tracking-widest">Processing</div>
+                                <div className="text-2xl font-bold text-emerald-500">&lt; 1s</div>
+                                <div className="text-xs font-mono text-slate-400 uppercase tracking-widest">Nhập giao dịch</div>
                             </div>
                             <div className="w-px h-10 bg-slate-200" />
                             <div className="space-y-1">
-                                <div className="text-2xl font-bold text-[#3B82F6]">99%</div>
-                                <div className="text-xs font-mono text-slate-400 uppercase tracking-widest">Accuracy</div>
+                                <div className="text-2xl font-bold text-emerald-500">AI</div>
+                                <div className="text-xs font-mono text-slate-400 uppercase tracking-widest">Auto-categorize</div>
                             </div>
                         </div>
                     </motion.div>
@@ -142,7 +134,7 @@ export default function AuthPage() {
                             <div className="[backface-visibility:hidden]">
                                 <AuthCard
                                     title="ĐĂNG NHẬP"
-                                    subtitle="Portal Access"
+                                    subtitle="Welcome Back"
                                     isLogin={true}
                                     onSubmit={loginForm.handleSubmit(onLoginSubmit)}
                                     form={loginForm}
@@ -193,7 +185,7 @@ function AuthCard({ title, subtitle, isLogin, onSubmit, form, isLoading, error, 
                             <Input
                                 {...form.register('fullName')}
                                 placeholder="Nguyễn Văn A"
-                                className="bg-white/50 border-slate-200 text-[#121212] focus:border-blue-500 h-12 rounded-xl"
+                                className="bg-white/50 border-slate-200 text-[#121212] focus:border-emerald-500 h-12 rounded-xl"
                             />
                         </div>
                     )}
@@ -204,7 +196,7 @@ function AuthCard({ title, subtitle, isLogin, onSubmit, form, isLoading, error, 
                             {...form.register('email')}
                             type="email"
                             placeholder="email@address.com"
-                            className="bg-white/50 border-slate-200 text-[#121212] focus:border-blue-500 h-12 rounded-xl"
+                            className="bg-white/50 border-slate-200 text-[#121212] focus:border-emerald-500 h-12 rounded-xl"
                         />
                     </div>
 
@@ -215,12 +207,12 @@ function AuthCard({ title, subtitle, isLogin, onSubmit, form, isLoading, error, 
                                 {...form.register('password')}
                                 type={showPassword ? "text" : "password"}
                                 placeholder="••••••••"
-                                className="bg-white/50 border-slate-200 text-[#121212] focus:border-blue-500 h-12 rounded-xl"
+                                className="bg-white/50 border-slate-200 text-[#121212] focus:border-emerald-500 h-12 rounded-xl"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold hover:text-[#3B82F6]"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold hover:text-emerald-500"
                             >
                                 {showPassword ? "HIDE" : "SHOW"}
                             </button>
@@ -234,7 +226,7 @@ function AuthCard({ title, subtitle, isLogin, onSubmit, form, isLoading, error, 
                                 {...form.register('confirmPassword')}
                                 type="password"
                                 placeholder="••••••••"
-                                className="bg-white/50 border-slate-200 text-[#121212] focus:border-blue-500 h-12 rounded-xl"
+                                className="bg-white/50 border-slate-200 text-[#121212] focus:border-emerald-500 h-12 rounded-xl"
                             />
                         </div>
                     )}
@@ -244,9 +236,9 @@ function AuthCard({ title, subtitle, isLogin, onSubmit, form, isLoading, error, 
                     <Button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full bg-[#3B82F6] hover:bg-[#2563EB] text-white font-black py-6 rounded-xl shadow-xl shadow-blue-500/25 transition-all duration-300"
+                        className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-6 rounded-xl shadow-xl shadow-emerald-500/25 transition-all duration-300"
                     >
-                        {isLoading ? "ĐANG XỬ LÝ..." : isLogin ? "VÀO HỆ THỐNG" : "ĐĂNG KÝ NGAY"}
+                        {isLoading ? "ĐANG XỬ LÝ..." : isLogin ? "VÀO DASHBOARD" : "ĐĂNG KÝ NGAY"}
                     </Button>
                 </form>
 
@@ -261,7 +253,6 @@ function AuthCard({ title, subtitle, isLogin, onSubmit, form, isLoading, error, 
                     href="/api/auth/google"
                     className="flex items-center justify-center gap-3 w-full border border-slate-200 bg-white hover:bg-slate-50 text-[#121212] font-bold py-3 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
                 >
-                    {/* Google G logo */}
                     <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -275,11 +266,11 @@ function AuthCard({ title, subtitle, isLogin, onSubmit, form, isLoading, error, 
                     <button
                         type="button"
                         onClick={() => { setIsLogin(!isLogin); setError(null); }}
-                        className="text-sm font-bold text-[#3B82F6] hover:text-[#2563EB] transition-colors uppercase tracking-tight"
+                        className="text-sm font-bold text-emerald-500 hover:text-emerald-600 transition-colors uppercase tracking-tight"
                     >
                         {isLogin ? "Tạo tài khoản mới" : "Đã có tài khoản? Đăng nhập"}
                     </button>
-                    <Link href="/" className="text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-tight">Cần giúp đỡ?</Link>
+                    <Link href="/" className="text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-tight">Về trang chủ</Link>
                 </div>
             </div>
         </div>

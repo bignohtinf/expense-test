@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Menu, LogOut, User, LayoutDashboard, FileText, Plus, X } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Menu, LogOut, User, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -20,14 +20,14 @@ interface NavItem {
 }
 
 interface HeaderProps {
-    title: string;
-    userRole?: 'customer' | 'adjudicator' | 'admin';
+    title?: string;
     userName?: string;
     navItems?: NavItem[];
 }
 
-export function Header({ title, userRole, userName = 'User', navItems = [] }: HeaderProps) {
+export function Header({ title, userName = 'User', navItems = [] }: HeaderProps) {
     const pathname = usePathname();
+    const router = useRouter();
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -42,7 +42,7 @@ export function Header({ title, userRole, userName = 'User', navItems = [] }: He
     const handleLogout = () => {
         localStorage.removeItem('user');
         localStorage.removeItem('sessionToken');
-        window.location.href = '/auth/login';
+        router.push('/auth/sign-in');
     };
 
     return (
@@ -50,18 +50,18 @@ export function Header({ title, userRole, userName = 'User', navItems = [] }: He
             <motion.header
                 initial={{ y: -100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className={`w-full max-w-6xl transition-all duration-500 rounded-full border border-blue-100 shadow-xl overflow-hidden ${scrolled ? 'bg-white/95 backdrop-blur-md py-2' : 'bg-white/80 backdrop-blur-sm py-3'
+                className={`w-full max-w-6xl transition-all duration-500 rounded-full border border-emerald-100 shadow-xl overflow-hidden ${scrolled ? 'bg-white/95 backdrop-blur-md py-2' : 'bg-white/80 backdrop-blur-sm py-3'
                     }`}
             >
                 <div className="flex items-center justify-between px-6 md:px-8">
-                    {/* Logo Claira */}
+                    {/* Logo */}
                     <Link href="/" className="flex items-center gap-2">
                         <motion.span
                             className="text-2xl font-black tracking-tighter"
                             whileHover={{ scale: 1.05 }}
                         >
-                            <span className="text-[#121212]">Cla</span>
-                            <span className="text-[#3B82F6]">ira</span>
+                            <span className="text-[#121212]">Money</span>
+                            <span className="text-emerald-500">Mind</span>
                         </motion.span>
                     </Link>
 
@@ -74,14 +74,14 @@ export function Header({ title, userRole, userName = 'User', navItems = [] }: He
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className={`relative px-4 font-bold text-sm uppercase tracking-tight transition-colors hover:text-[#3B82F6] ${isActive ? 'text-[#3B82F6]' : 'text-slate-500'
+                                        className={`relative px-4 font-bold text-sm uppercase tracking-tight transition-colors hover:text-emerald-500 ${isActive ? 'text-emerald-500' : 'text-slate-500'
                                             }`}
                                     >
                                         {item.label}
                                         {isActive && (
                                             <motion.div
                                                 layoutId="activeNavDashboard"
-                                                className="absolute -bottom-1 left-4 right-4 h-0.5 bg-[#3B82F6] rounded-full"
+                                                className="absolute -bottom-1 left-4 right-4 h-0.5 bg-emerald-500 rounded-full"
                                                 transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                                             />
                                         )}
@@ -97,21 +97,21 @@ export function Header({ title, userRole, userName = 'User', navItems = [] }: He
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="sm" className="gap-3 font-bold border border-slate-100 rounded-full hover:bg-slate-50 px-4 h-10">
-                                        <div className="h-6 w-6 rounded-full bg-[#3B82F6]/10 flex items-center justify-center text-[#3B82F6]">
+                                        <div className="h-6 w-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
                                             <User className="h-4 w-4" />
                                         </div>
                                         <span className="text-[#121212] text-xs uppercase tracking-widest">{userName}</span>
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl border-blue-50 shadow-xl mt-2">
+                                <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl border-emerald-50 shadow-xl mt-2">
                                     <div className="px-3 py-2 mb-2 border-b border-slate-50">
                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Đã đăng nhập</p>
                                         <p className="text-sm font-black text-[#121212] truncate">{userName}</p>
                                     </div>
-                                    <DropdownMenuItem asChild className="rounded-xl cursor-pointer font-bold text-slate-600 focus:text-[#3B82F6] focus:bg-blue-50">
-                                        <Link href="/customer/profile" className="flex items-center">
+                                    <DropdownMenuItem asChild className="rounded-xl cursor-pointer font-bold text-slate-600 focus:text-emerald-500 focus:bg-emerald-50">
+                                        <Link href="/settings" className="flex items-center">
                                             <User className="h-4 w-4 mr-2" />
-                                            Hồ sơ cá nhân
+                                            Cài đặt
                                         </Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onClick={handleLogout} className="rounded-xl cursor-pointer text-red-500 focus:text-red-600 focus:bg-red-50 font-bold">
@@ -146,7 +146,7 @@ export function Header({ title, userRole, userName = 'User', navItems = [] }: He
                             <div className="p-6 space-y-4">
                                 {navItems.map((item) => (
                                     <Link key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)}>
-                                        <div className={`flex items-center gap-4 p-4 rounded-2xl font-black uppercase tracking-widest text-xs ${pathname === item.href ? 'bg-blue-50 text-[#3B82F6]' : 'text-slate-500'
+                                        <div className={`flex items-center gap-4 p-4 rounded-2xl font-black uppercase tracking-widest text-xs ${pathname === item.href ? 'bg-emerald-50 text-emerald-500' : 'text-slate-500'
                                             }`}>
                                             {item.icon}
                                             {item.label}

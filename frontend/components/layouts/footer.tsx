@@ -42,25 +42,25 @@ export function Footer({ hideNewsletter = false }: { hideNewsletter?: boolean })
 
     const footerLinks = [
         {
-            title: "Giải Pháp",
-            links: ["AI Extraction", "Rule Engine", "Fraud Detection", "AI Reasoning"],
+            title: "Tính năng",
+            links: ["Nhập NLP", "Quản lý ngân sách", "Báo cáo", "Đa ví"],
         },
         {
             title: "Liên Kết",
-            links: ["Trang Chủ", "Dịch Vụ", "Quy Trình", "Giải Pháp"],
+            links: ["Trang Chủ", "Dashboard", "Giao dịch", "Cài đặt"],
         },
         {
-            title: "Công Ty",
-            links: ["Về Chúng Tôi", "Tuyển Dụng", "Báo Chí", "Liên Hệ"],
+            title: "Dự Án",
+            links: ["GitHub", "API Docs", "Tech Stack", "Liên Hệ"],
         },
         {
             title: "Pháp Lý",
-            links: ["Chính Sách Bảo Mật", "Điều Khoản Dịch Vụ", "Chính Sách Cookie"],
+            links: ["Chính Sách Bảo Mật", "Điều Khoản Dịch Vụ"],
         },
     ]
 
     return (
-        <footer ref={footerRef} id="footer" className="relative bg-white pt-16 pb-6 overflow-hidden border-t border-blue-50">
+        <footer ref={footerRef} id="footer" className="relative bg-white pt-16 pb-6 overflow-hidden border-t border-emerald-50">
             <div className="max-w-7xl mx-auto px-6">
                 {!hideNewsletter && (
                     <motion.div
@@ -78,16 +78,16 @@ export function Footer({ hideNewsletter = false }: { hideNewsletter?: boolean })
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
                             >
-                                BẮT ĐẦU
+                                BẮT ĐẦU QUẢN LÝ
                             </motion.span>
                             <motion.span
-                                className="block text-[#3B82F6]"
+                                className="block text-emerald-500"
                                 initial={{ y: 100 }}
                                 whileInView={{ y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1], delay: 0.1 }}
                             >
-                                NGAY HÔM NAY?
+                                TÀI CHÍNH NGAY?
                             </motion.span>
                         </h2>
                     </motion.div>
@@ -108,16 +108,12 @@ export function Footer({ hideNewsletter = false }: { hideNewsletter?: boolean })
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="your@email.com"
-                                    className="w-full bg-white border-2 border-blue-100 rounded-xl px-4 py-3 text-[#121212] placeholder:text-[#121212]/40 font-mono text-sm focus:outline-none focus:border-[#3B82F6] transition-all duration-300"
-                                    whileFocus={{ borderColor: "#3B82F6" }}
-                                />
-                                <motion.div
-                                    className="absolute inset-0 rounded-xl pointer-events-none"
-                                    animate={email.length > 0 ? { boxShadow: "0 0 20px rgba(175,255,0,0.2)" } : { boxShadow: "none" }}
+                                    className="w-full bg-white border-2 border-emerald-100 rounded-xl px-4 py-3 text-[#121212] placeholder:text-[#121212]/40 font-mono text-sm focus:outline-none focus:border-emerald-500 transition-all duration-300"
+                                    whileFocus={{ borderColor: "#10b981" }}
                                 />
                             </motion.div>
                             <motion.button
-                                className="bg-[#3B82F6] text-white px-6 py-3 rounded-xl font-bold text-sm tracking-wide whitespace-nowrap relative overflow-hidden"
+                                className="bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold text-sm tracking-wide whitespace-nowrap relative overflow-hidden"
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
@@ -145,7 +141,7 @@ export function Footer({ hideNewsletter = false }: { hideNewsletter?: boolean })
                             viewport={{ once: true }}
                             transition={{ delay: 0.4 }}
                         >
-                            Nhận bản tin cập nhật về công nghệ InsurTech mới nhất.
+                            Nhận tips quản lý tài chính cá nhân và cập nhật tính năng mới.
                         </motion.p>
                     </motion.div>
                 )}
@@ -159,18 +155,18 @@ export function Footer({ hideNewsletter = false }: { hideNewsletter?: boolean })
                         transition={{ delay: 0.3 }}
                     >
                         <p className="text-[#121212]/60 font-mono text-xs max-w-xl mx-auto leading-relaxed">
-                            Claira là hệ thống tự động hóa xét duyệt bồi thường bảo hiểm y tế hàng đầu, giúp doanh nghiệp tối ưu hóa quy trình và nâng cao trải nghiệm khách hàng bằng AI.
+                            MoneyMind là ứng dụng quản lý chi tiêu cá nhân thông minh, tích hợp AI giúp bạn ghi nhận giao dịch bằng ngôn ngữ tự nhiên, theo dõi ngân sách và nhận insights tài chính mỗi tháng.
                         </p>
                     </motion.div>
                 )}
 
                 <motion.div
-                    className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-2 pb-8 border-t border-blue-50"
+                    className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-2 pb-8 border-t border-emerald-50"
                     variants={containerVariants}
                     initial="hidden"
                     animate={isInView ? "visible" : "hidden"}
                 >
-                    {footerLinks.map((section, sectionIndex) => (
+                    {footerLinks.map((section) => (
                         <motion.div key={section.title} variants={itemVariants}>
                             <h4 className="font-bold text-[#121212] text-sm mb-3">{section.title}</h4>
                             <ul className="space-y-2">
@@ -179,7 +175,7 @@ export function Footer({ hideNewsletter = false }: { hideNewsletter?: boolean })
                                         <motion.div whileHover={{ x: 4 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
                                             <Link
                                                 href="#"
-                                                className="text-[#121212]/60 hover:text-[#3B82F6] font-mono text-xs transition-colors inline-block"
+                                                className="text-[#121212]/60 hover:text-emerald-500 font-mono text-xs transition-colors inline-block"
                                             >
                                                 {item}
                                             </Link>
@@ -192,7 +188,7 @@ export function Footer({ hideNewsletter = false }: { hideNewsletter?: boolean })
                 </motion.div>
 
                 <motion.div
-                    className="flex flex-col md:flex-row justify-between items-center pt-6 border-t border-blue-50 gap-3"
+                    className="flex flex-col md:flex-row justify-between items-center pt-6 border-t border-emerald-50 gap-3"
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
@@ -204,12 +200,12 @@ export function Footer({ hideNewsletter = false }: { hideNewsletter?: boolean })
                         transition={{ type: "spring", stiffness: 400, damping: 17 }}
                     >
                         <span className="text-xl font-black">
-                            <span className="text-[#121212]">Cla</span>
-                            <span className="text-[#3B82F6]">ira</span>
+                            <span className="text-[#121212]">Money</span>
+                            <span className="text-emerald-500">Mind</span>
                         </span>
                     </motion.div>
 
-                    <p className="text-[#121212]/40 font-mono text-xs">© 2026 Claira AI. All rights reserved.</p>
+                    <p className="text-[#121212]/40 font-mono text-xs">&copy; 2026 MoneyMind. All rights reserved.</p>
 
                     <motion.p
                         className="text-[#121212]/30 font-mono text-xs cursor-pointer"
@@ -220,7 +216,7 @@ export function Footer({ hideNewsletter = false }: { hideNewsletter?: boolean })
                                 ? {
                                     rotate: [0, -5, 5, -5, 5, 0],
                                     scale: [1, 1.1, 1],
-                                    color: "#3B82F6",
+                                    color: "#10b981",
                                 }
                                 : {
                                     rotate: 0,
@@ -230,19 +226,19 @@ export function Footer({ hideNewsletter = false }: { hideNewsletter?: boolean })
                         }
                         transition={{ duration: 0.5 }}
                     >
-                        made with energy
+                        built with FastAPI + Next.js
                     </motion.p>
                 </motion.div>
             </div>
 
             <motion.div
-                className="absolute bottom-[-3rem] left-1/2 -translate-x-1/2 text-[12rem] md:text-[25rem] font-black text-[#121212]/[0.02] pointer-events-none select-none leading-none"
+                className="absolute bottom-[-3rem] left-1/2 -translate-x-1/2 text-[12rem] md:text-[20rem] font-black text-[#121212]/[0.02] pointer-events-none select-none leading-none"
                 initial={{ y: 100, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 1, ease: "easeOut" }}
             >
-                Claira
+                MoneyMind
             </motion.div>
         </footer>
     )
