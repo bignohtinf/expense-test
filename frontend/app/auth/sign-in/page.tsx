@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { loginSchema, registerSchema, type LoginInput, type RegisterInput } from '@/lib/form-schemas';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import './login.css';
+
 
 function AuthForm() {
     const router = useRouter();
