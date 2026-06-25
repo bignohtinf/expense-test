@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -9,8 +9,9 @@ import { motion } from 'framer-motion';
 import { loginSchema, registerSchema, type LoginInput, type RegisterInput } from '@/lib/form-schemas';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import './login.css';
 
-export default function AuthPage() {
+function AuthForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [isLogin, setIsLogin] = useState(searchParams.get('mode') !== 'register');
@@ -168,6 +169,14 @@ export default function AuthPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function AuthPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-white text-[#121212] font-sans">Đang tải...</div>}>
+            <AuthForm />
+        </Suspense>
     );
 }
 
