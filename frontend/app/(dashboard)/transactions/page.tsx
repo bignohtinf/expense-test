@@ -8,6 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Plus, Search, Trash2, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import type { Transaction, TransactionList, Category, Wallet } from '@/types';
+import { QuickAddInput } from '@/components/transactions/quick-add-input';
+import { QuickAddConfirmCard } from '@/components/transactions/quick-add-confirm-card';
+import { useQuickAdd } from '@/hooks/useQuickAdd';
 
 function formatCurrency(amount: number): string {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
@@ -49,6 +52,8 @@ export default function TransactionsPage() {
     }, [page, search, filterType]);
 
     useEffect(() => { loadData(); }, [loadData]);
+
+    const quickAdd = useQuickAdd(loadData);
 
     useEffect(() => {
         async function loadMeta() {
@@ -161,6 +166,24 @@ export default function TransactionsPage() {
                         </div>
                     </DialogContent>
                 </Dialog>
+            </div>
+
+            {/* Quick-Add (NLP) */}
+            <div className="space-y-3">
+                <QuickAddInput parsing={quickAdd.status === 'parsing'} onParse={quickAdd.parse} />
+                {quickAdd.error && quickAdd.status === 'error' && (
+                    <p className="text-sm text-red-500">{quickAdd.error}</p>
+                )}
+                {quickAdd.draft && (quickAdd.status === 'reviewing' || quickAdd.status === 'saving') && (
+                    <QuickAddConfirmCard
+                        draft={quickAdd.draft}
+                        categories={categories}
+                        saving={quickAdd.status === 'saving'}
+                        onChange={quickAdd.updateDraft}
+                        onConfirm={() => quickAdd.confirm()}
+                        onCancel={quickAdd.cancel}
+                    />
+                )}
             </div>
 
             {/* Filters */}

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layouts/header';
 import { Sidebar, SidebarItem } from '@/components/layouts/sibebar';
+import { ChatWidget } from '@/components/chat/chat-widget';
 import { LayoutDashboard, ArrowLeftRight, PiggyBank, Wallet, BarChart3, Settings } from 'lucide-react';
 
 const navItems: SidebarItem[] = [
@@ -46,6 +47,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <main className="md:ml-64 pt-28 pb-8 px-4 md:px-8">
                 {children}
             </main>
+            <ChatWidget />
         </div>
     );
 }

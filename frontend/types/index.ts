@@ -112,3 +112,31 @@ export interface DailyItem {
     income: number;
     expense: number;
 }
+
+// --- Chat (AI Query) feature ---
+export interface ChatMessage {
+    id: string;
+    role: 'user' | 'assistant';
+    content: string;
+    functionCalled?: string | null;
+    data?: any;
+    createdAt: string;
+}
+
+export interface ChatResponse {
+    answer: string;
+    function_called: string | null;
+    data: any;
+}
+
+// --- NLP Quick-Add feature ---
+export interface TransactionDraft {
+    amount: number;
+    type: 'income' | 'expense';
+    category_id: string;
+    category_name: string;
+    description: string;
+    transaction_date: string;
+    confidence: number;
+    raw_text: string;
+}

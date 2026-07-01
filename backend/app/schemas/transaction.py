@@ -55,3 +55,18 @@ class TransactionListResponse(BaseModel):
     page: int
     per_page: int
     total_pages: int
+
+# --- NLP Quick-Add (design doc section 13) ---
+
+class TransactionParseRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=200)
+
+class TransactionParseResponse(BaseModel):
+    amount: Decimal
+    type: str
+    category_id: UUID
+    category_name: str
+    description: str
+    transaction_date: date
+    confidence: float
+    raw_text: str

@@ -156,6 +156,20 @@ class ApiClient {
         if (year) query.set('year', String(year));
         return this.request(`/reports/daily?${query}`);
     }
+
+    // Chat (AI Query)
+    async sendChatMessage(message: string) {
+        return this.request('/chat', { method: 'POST', body: JSON.stringify({ message }) });
+    }
+
+    async getChatSuggestions() {
+        return this.request('/chat/suggestions');
+    }
+
+    // Transactions — NLP Quick-Add
+    async parseTransaction(text: string) {
+        return this.request('/transactions/parse', { method: 'POST', body: JSON.stringify({ text }) });
+    }
 }
 
 export const api = new ApiClient();

@@ -671,3 +671,123 @@ openai>=1.30.0
 # frontend/package.json
 # Không cần thêm dependency — dùng React Query + Zustand có sẵn
 ```
+
+---
+
+## 13. Tính năng Nhập nhanh — NLP Quick-Add Transaction
+
+### 13.1 Tổng quan
+
+Cho phép user gõ (hoặc dán) một câu tiếng Việt tự nhiên mô tả một giao dịch, ví dụ `"ăn trưa 20k"`, `"cà phê 35k sáng nay"`, `"lương tháng 6 là 20tr"` — hệ thống dùng OpenAI (gpt-4o-mini, JSON mode / structured output) để tách câu thành các trường có cấu trúc: **số tiền, loại (thu/chi), danh mục, mô tả, ngày giao dịch**, kèm điểm tin cậy (confidence). User xem lại bản nháp, sửa nếu cần, rồi xác nhận 1 tap để tạo giao dịch thật — không có gì được ghi vào DB cho tới khi user xác nhận.
+
+Đây khác với Chat feature (mục 12) ở chỗ: Chat trả lời câu hỏi (đọc dữ liệu), còn Quick-Add tạo dữ liệu mới (ghi giao dịch) từ ngôn ngữ tự nhiên.
+
+**Pipeline 5 bước:**
+1. User gõ câu vào ô "Nhập nhanh" → 2. POST `/api/v1/transactions/parse` kèm câu + danh sách category hiện có của user → 3. OpenAI parse thành JSON có cấu trúc, chọn category khớp nhất trong danh sách → 4. Backend validate & tính confidence → 5. Trả bản nháp (draft) cho frontend hiển thị thẻ xác nhận; nếu user bấm "Xác nhận", frontend gọi `POST /api/v1/transactions` (endpoint tạo giao dịch có sẵn) với dữ liệu đã parse (có thể chỉnh sửa trước khi gửi).
+
+### 13.2 Cấu trúc thư mục bổ sung
+
+```
+backend/
+├── app/
+│   ├── prompts/
+│   │   └── parse_transaction.py       # System prompt + JSON schema cho parse
+│   ├── services/
+│   │   └── transaction_parser.py      # Gọi OpenAI + match category + tính confidence
+│   └── schemas/
+│       └── transaction.py             # + TransactionParseRequest / TransactionParseResponse
+
+frontend/
+├── components/
+│   └── transactions/
+│       ├── quick-add-input.tsx        # Ô input "Nhập nhanh" + nút Parse
+│       └── quick-add-confirm-card.tsx # Thẻ xác nhận: amount/category/type/date + badge confidence
+├── hooks/
+│   └── useQuickAdd.ts                 # State máy: idle → parsing → reviewing → confirmed
+└── ...
+```
+
+### 13.3 API Endpoint
+
+```
+POST /api/v1/transactions/parse
+Headers: Authorization: Bearer <token>
+Body: { "text": "ăn trưa 20k" }
+Response 200:
+{
+  "amount": 20000,
+  "type": "expense",
+  "category_id": "uuid-của-category-Ăn-uống",
+  "category_name": "Ăn uống",
+  "description": "Ăn trưa",
+  "transaction_date": "2026-07-01",
+  "confidence": 0.95,
+  "raw_text": "ăn trưa 20k"
+}
+```
+
+Response không tạo transaction — chỉ trả bản nháp. Tạo thật bằng cách gọi `POST /api/v1/transactions` với `category_id`, `amount`, `type`, `description`, `transaction_date` lấy từ response trên (frontend cho phép sửa trước khi submit).
+
+Rate limit: dùng chung limiter 20 requests/phút/user với Chat feature.
+
+### 13.4 Logic Parse & Category Matching
+
+- OpenAI được cung cấp toàn bộ danh sách category (mặc định + custom) của user kèm `id`, `name`, `type` trong system prompt, và được yêu cầu trả về structured output đúng schema (amount, type, category_name, description, date_hint).
+- Backend nhận `category_name` từ OpenAI, match với danh sách category thật của user (so khớp chính xác trước, sau đó fallback so khớp không phân biệt hoa/thường); nếu không khớp được category nào → dùng category "Khác" cùng loại.
+- `date_hint` từ OpenAI (`today`, `yesterday`, ISO date, hoặc null) được backend resolve thành `transaction_date` thật (không để OpenAI tự tính ngày để tránh sai lệch timezone).
+- **Confidence score** = trung bình có trọng số của: (a) OpenAI có trả về amount hợp lệ > 0 hay không, (b) category có match chính xác (1.0) hay fallback "Khác" (0.5), (c) OpenAI tự báo cáo độ chắc chắn (self-reported qua structured field `confidence_hint` 0–1). Nếu confidence < 0.6, frontend hiển thị cảnh báo "Vui lòng kiểm tra lại" và không cho auto-submit.
+
+### 13.5 Security & Validation
+
+- **user_id scoping** — danh sách category truyền cho OpenAI luôn lọc theo user hiện tại (default + custom), không leak category của user khác.
+- **Input sanitization** — text tối đa 200 ký tự, strip HTML.
+- **Không tự động ghi DB** — endpoint `/parse` chỉ đọc & trả JSON, việc tạo transaction vẫn đi qua endpoint `POST /transactions` hiện có (đã có validation category/wallet đầy đủ).
+- **Rate limiting** — chung 20 req/phút/user với chat.
+- **OpenAI error fallback** — nếu parse fail hoặc trả JSON không hợp lệ → HTTP 422 kèm message "Không hiểu được câu này, vui lòng nhập thủ công."
+
+### 13.6 Frontend Quick-Add Flow
+
+- **QuickAddInput**: ô input nổi bật ở đầu trang Giao dịch (và Dashboard), placeholder gợi ý: `"Nhập nhanh: ăn trưa 20k, cà phê 35k..."`
+- Khi user nhấn Enter/nút Parse → gọi `/transactions/parse`, hiện trạng thái loading dạng "AI đang phân tích..."
+- **QuickAddConfirmCard**: hiển thị bản nháp — số tiền, danh mục (có thể đổi qua dropdown), loại thu/chi, ngày, kèm badge % confidence (màu emerald nếu ≥90%, vàng nếu 60–89%, đỏ nếu <60%)
+- Nút "Xác nhận & Lưu" → gọi `POST /transactions` với dữ liệu (đã chỉnh sửa nếu có) → đóng thẻ, refresh danh sách giao dịch
+- Nút "Hủy" → đóng thẻ, không lưu gì
+
+### 13.7 Dependencies bổ sung
+
+```
+# backend/requirements.txt
+# Dùng chung openai>=1.30.0 đã khai báo ở mục 12.7
+
+# frontend/package.json
+# Không cần thêm dependency
+```
+
+---
+
+## 14. Docker & CI/CD
+
+### 14.1 Docker
+
+- `backend/Dockerfile`: image `python:3.12-slim`, cài `requirements.txt`, chạy `uvicorn app.main:app`.
+- `frontend/Dockerfile`: multi-stage build Next.js (deps → builder → runner với `output: standalone`), chạy `node server.js` trên port 3000.
+- `docker-compose.yml` (root): 3 service — `db` (postgres:16), `api` (build từ `backend/`), `web` (build từ `frontend/`) — dùng để chạy toàn bộ stack local bằng `docker compose up`.
+
+### 14.2 CI/CD (GitHub Actions)
+
+- `.github/workflows/backend.yml`: trigger trên push/PR đụng tới `backend/**`.
+  - Job `test`: dựng Postgres service container, cài dependencies, chạy `pytest`.
+  - Job `deploy` (chỉ khi push nhánh `main` và job test pass): build & push Docker image lên Artifact Registry, deploy lên **Cloud Run** service `expense-test` tại region `asia-southeast1` (URL: `https://expense-test-500602.asia-southeast1.run.app`), dùng secret `GCP_PROJECT_ID` + `GCP_SA_KEY` (hoặc Workload Identity Federation).
+- `.github/workflows/frontend.yml`: trigger trên push/PR đụng tới `frontend/**`.
+  - Job `test`: `npm ci`, `npm run lint`, `npm run build`.
+  - Job `deploy` (chỉ khi push `main`): build Docker image, deploy lên Cloud Run (hoặc Vercel nếu được cấu hình) trỏ `NEXT_PUBLIC_API_URL` về URL backend ở trên.
+
+### 14.3 Môi trường (secrets cần cấu hình trên GitHub repo)
+
+| Secret | Mô tả |
+|--------|-------|
+| `GCP_PROJECT_ID` | Project ID trên Google Cloud |
+| `GCP_SA_KEY` | Service account key (JSON) có quyền deploy Cloud Run + push Artifact Registry |
+| `OPENAI_API_KEY` | API key OpenAI, set làm biến môi trường Cloud Run cho backend |
+| `DATABASE_URL` | Connection string Postgres production (Cloud SQL) |
+| `SECRET_KEY` | JWT secret production |

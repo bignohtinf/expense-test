@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import verify_token
 from app.models.user import User
+from app.api.middleware.rate_limiting import ai_rate_limiter
 
 security = HTTPBearer()
 
@@ -24,3 +25,12 @@ async def get_current_user(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User không tồn tại")
 
     return user
+
+
+async def rate_limit_ai(current_user: User = Depends(get_current_user)) -> User:
+    """
+    Shared throttle for AI-powered endpoints (chat + transaction parsing):
+    20 requests/minute/user (design doc 12.5 / 13.5). Raises 429 if exceeded.
+    """
+    ai_rate_limiter.check(str(current_user.id))
+    return current_user

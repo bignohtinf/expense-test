@@ -12,10 +12,30 @@ from app.models.category import Category
 from app.models.user import User
 from app.schemas.transaction import (
     TransactionCreate, TransactionUpdate, TransactionResponse, TransactionListResponse,
+    TransactionParseRequest, TransactionParseResponse,
 )
-from app.api.dependencies import get_current_user
+from app.api.dependencies import get_current_user, rate_limit_ai
+from app.services.transaction_parser import parse_transaction_text, TransactionParseError
 
 router = APIRouter()
+
+@router.post("/parse", response_model=TransactionParseResponse)
+def parse_transaction(
+    data: TransactionParseRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(rate_limit_ai),
+):
+    """
+    NLP Quick-Add (design doc section 13) — parse a natural-language Vietnamese
+    sentence (e.g. "ăn trưa 20k") into a transaction draft. Nothing is saved;
+    the client must POST the (optionally edited) result to `/transactions` to
+    actually create it. Rate limited to 20 requests/minute/user.
+    """
+    try:
+        draft = parse_transaction_text(db=db, user_id=current_user.id, text=data.text)
+    except TransactionParseError as exc:
+        raise HTTPException(status_code=422, detail=exc.message)
+    return TransactionParseResponse(**draft)
 
 @router.get("", response_model=TransactionListResponse)
 def list_transactions(
